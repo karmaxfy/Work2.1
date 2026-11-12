@@ -15,7 +15,7 @@ using Words = std::vector<std::string>;
 enum class Op {
     Help, Back, Exit, Print, Create,
     Push, PushFront, Insert, Get, Set, Delete, Length,
-    Before, After, DeleteHead, DeleteTail, Find, Reverse,
+    Before, After, DeleteHead, DeleteTail, DeleteBefore, DeleteAfter, ReadHead, ReadTail, Find, Reverse,
     Pop, TreeInsert, TreeDelete, TreeGet, Inorder,
     Preorder, Postorder, BFS, Min, Max, Next, Prev, Check
 };
@@ -40,12 +40,20 @@ const std::unordered_map<std::string, Command> commands = {
     {"FDEL", {Op::Delete, 'F', 3}}, {"FDELHEAD", {Op::DeleteHead, 'F', 2}},
     {"FDELTAIL", {Op::DeleteTail, 'F', 2}}, {"FGET", {Op::Get, 'F', 3}},
     {"FFIND", {Op::Find, 'F', 3}},
+    {"FDELBEFORE", {Op::DeleteBefore, 'F', 3}},
+    {"FDELAFTER", {Op::DeleteAfter, 'F', 3}},
+    {"FGETHEAD", {Op::ReadHead, 'F', 2}},
+    {"FGETTAIL", {Op::ReadTail, 'F', 2}},
     {"LCREATE", {Op::Create, 'L', 2}},
     {"LPUSH", {Op::Push, 'L', 3}}, {"LPUSHFRONT", {Op::PushFront, 'L', 3}},
     {"LAFTER", {Op::After, 'L', 4}}, {"LBEFORE", {Op::Before, 'L', 4}},
     {"LDEL", {Op::Delete, 'L', 3}}, {"LDELHEAD", {Op::DeleteHead, 'L', 2}},
     {"LDELTAIL", {Op::DeleteTail, 'L', 2}}, {"LGET", {Op::Get, 'L', 3}},
     {"LFIND", {Op::Find, 'L', 3}}, {"LREVERSE", {Op::Reverse, 'L', 2}},
+    {"LDELBEFORE", {Op::DeleteBefore, 'L', 3}},
+    {"LDELAFTER", {Op::DeleteAfter, 'L', 3}},
+    {"LGETHEAD", {Op::ReadHead, 'L', 2}},
+    {"LGETTAIL", {Op::ReadTail, 'L', 2}},
     {"SCREATE", {Op::Create, 'S', 2}},
     {"SPUSH", {Op::Push, 'S', 3}}, {"SPOP", {Op::Pop, 'S', 2}},
     {"SGET", {Op::Get, 'S', 2}},
@@ -208,6 +216,16 @@ std::string listAction(List& list, Op op, const Words& args, bool& changed) {
             if (!list.remove(args[2])) return "NOT FOUND";
             changed = true;
             return "OK";
+        case Op::DeleteBefore:
+            if (!list.remove_before(args[2])) return "NOT FOUND";
+            changed = true;
+            return "OK";
+        case Op::DeleteAfter:
+            if (!list.remove_after(args[2])) return "NOT FOUND";
+            changed = true;
+            return "OK";
+        case Op::ReadHead: return list.front();
+        case Op::ReadTail: return list.back();
         case Op::DeleteHead: changed = true; return list.pop_front();
         case Op::DeleteTail: changed = true; return list.pop_back();
         case Op::Get: return list.get(indexOf(args[2]));
@@ -220,7 +238,8 @@ const std::string help =
     "M: MCREATE MPUSH MINSERT MGET MSET MDEL MLEN\n"
     "F/L: FCREATE LCREATE FPUSH LPUSH FPUSHFRONT LPUSHFRONT FAFTER LAFTER "
     "FBEFORE LBEFORE FDEL LDEL FDELHEAD LDELHEAD FDELTAIL LDELTAIL "
-    "FGET LGET FFIND LFIND LREVERSE\n"
+    "FGET LGET FFIND LFIND LREVERSE FDELBEFORE FDELAFTER "
+    "LDELBEFORE LDELAFTER FGETHEAD FGETTAIL LGETHEAD LGETTAIL\n"
     "S: SCREATE SPUSH SPOP SGET\n"
     "Q: QCREATE QPUSH QPOP QGET\n"
     "T: TCREATE TINSERT TDEL TGET TINORDER TPREORDER TPOSTORDER "

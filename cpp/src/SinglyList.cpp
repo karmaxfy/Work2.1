@@ -117,6 +117,49 @@ bool SinglyList::remove(const Text& value) {
     return false;
 }
 
+// Удаление перед первым найденным значением.
+bool SinglyList::remove_before(const Text& target) {
+    Node* previousPrevious = nullptr;
+    Node* previous = nullptr;
+    Node* current = head_;
+    while (current != nullptr && current->value != target) {
+        previousPrevious = previous;
+        previous = current;
+        current = current->next;
+    }
+    if (current == nullptr || previous == nullptr) return false;
+    if (previousPrevious == nullptr) head_ = current;
+    else previousPrevious->next = current;
+    delete previous;
+    --size_;
+    return true;
+}
+
+// Удаление после первого найденного значения.
+bool SinglyList::remove_after(const Text& target) {
+    for (Node* current = head_; current != nullptr; current = current->next) {
+        if (current->value != target) continue;
+        if (current->next == nullptr) return false;
+        Node* removed = current->next;
+        current->next = removed->next;
+        if (tail_ == removed) tail_ = current;
+        delete removed;
+        --size_;
+        return true;
+    }
+    return false;
+}
+
+Text SinglyList::front() const {
+    if (head_ == nullptr) throw std::runtime_error("список пуст");
+    return head_->value;
+}
+
+Text SinglyList::back() const {
+    if (tail_ == nullptr) throw std::runtime_error("список пуст");
+    return tail_->value;
+}
+
 Text SinglyList::get(std::size_t index) const {
     Node* node = head_;
     for (std::size_t i = 0; i < index && node != nullptr; ++i) {

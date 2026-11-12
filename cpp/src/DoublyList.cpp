@@ -111,6 +111,31 @@ bool DoublyList::remove(const Text& value) {
     return true;
 }
 
+// Известный узел удаляется за O(1), поиск по значению — O(n).
+bool DoublyList::remove_before(const Text& target) {
+    Node* node = find(target);
+    if (node == nullptr || node->prev == nullptr) return false;
+    unlink(node->prev);
+    return true;
+}
+
+bool DoublyList::remove_after(const Text& target) {
+    Node* node = find(target);
+    if (node == nullptr || node->next == nullptr) return false;
+    unlink(node->next);
+    return true;
+}
+
+Text DoublyList::front() const {
+    if (head_ == nullptr) throw std::runtime_error("список пуст");
+    return head_->value;
+}
+
+Text DoublyList::back() const {
+    if (tail_ == nullptr) throw std::runtime_error("список пуст");
+    return tail_->value;
+}
+
 Text DoublyList::get(std::size_t index) const {
     Node* node = head_;
     for (std::size_t i = 0; i < index && node != nullptr; ++i) {

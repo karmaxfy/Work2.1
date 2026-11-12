@@ -19,6 +19,10 @@ public:
     Text pop_front();
     Text pop_back();
     bool remove(const Text& value);
+    bool remove_before(const Text& target);
+    bool remove_after(const Text& target);
+    Text front() const;
+    Text back() const;
     Text get(std::size_t index) const;
     bool contains(const Text& value) const;
     std::vector<Text> values() const;
